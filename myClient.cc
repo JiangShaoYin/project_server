@@ -34,9 +34,11 @@ int main()
 
 	char buf[1024];
 	memset(buf, 0, sizeof(buf));
+//开始从对端读
 	read(peerfd, buf, sizeof(buf));
+printf("1st\n");
 	printf("%s\n", buf);
-
+printf("2st\n");
     do_service(peerfd);
 
 

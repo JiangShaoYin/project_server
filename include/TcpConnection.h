@@ -24,6 +24,5 @@ class TcpConnection {
 		EpollPoller* _poller;
 		const InetAddr _localAddr;
 		const InetAddr _peerAddr;
-
-};
+};//end of TcpConnection
 #endif

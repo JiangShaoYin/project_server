@@ -16,10 +16,9 @@ int main() {
 	cout << "..............................." << endl;
 	cout << conn.connectionInfo() << endl;
 	conn.send("welcome to server!");
-	while(1){
+
 	cout << "server receive" << ": ";
 	cout << conn.receive() << endl;
 	conn.send(conn.receive());
-	}
 
 }

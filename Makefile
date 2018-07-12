@@ -1,5 +1,5 @@
 INC_DIR:= ./include/
-SRCS:=$(wildcard ./src/*.cc) $(wildcard ./src/*.cpp)
+SRCS:=$(wildcard ./src/*.cc) 
 OBJS:= $(patsubst %.cc, %.o, $(SRCS))
 
 CXX:=g++

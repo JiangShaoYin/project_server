@@ -10,14 +10,18 @@ TcpConnection::TcpConnection(int fd, EpollPoller* poller)
 	 _shutDown(false),
 	 _poller(poller), 
 	 _localAddr(Socket::getLocalAddr(fd)),
-	 _peerAddr(Socket::getPeerAddr(fd))  {_sockfd.nonBlock();}
+	 _peerAddr(Socket::getPeerAddr(fd))  {
+		// _sockfd.nonBlock();
+		}
 
 TcpConnection::TcpConnection(int fd)
 	:_sockfd(fd),
 	 _sockIO(fd),
 	 _shutDown(false),
 	 _localAddr(Socket::getLocalAddr(fd)),
-	 _peerAddr(Socket::getPeerAddr(fd))  {_sockfd.nonBlock();}
+	 _peerAddr(Socket::getPeerAddr(fd))  {
+//		 _sockfd.nonBlock();
+	 }
 
 string TcpConnection::receive() {
 	char buf[65536];
