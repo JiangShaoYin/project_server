@@ -36,9 +36,7 @@ int main()
 	memset(buf, 0, sizeof(buf));
 //开始从对端读
 	read(peerfd, buf, sizeof(buf));
-printf("1st\n");
 	printf("%s\n", buf);
-printf("2st\n");
     do_service(peerfd);
 
 
@@ -58,19 +56,16 @@ void do_service(int sockfd)
 
         //read
         int nread = read(sockfd, recvbuf, sizeof recvbuf);
-        if(nread == -1)
-        {
+        if(nread == -1)        {
             if(errno == EINTR)
                 continue;
             ERR_EXIT("read");
         }
-        else if(nread == 0)
-        {
+        else if(nread == 0) {
             printf("server close!\n");
             close(sockfd);
             exit(EXIT_SUCCESS);
         }
-
         printf("receive msg : %s\n", recvbuf);
 
         memset(recvbuf, 0, sizeof recvbuf);

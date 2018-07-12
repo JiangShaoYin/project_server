@@ -1,5 +1,5 @@
- /// @date    2018-07-11 21:32:20
- 
+/// @date    2018-07-11 21:32:20
+
 #include "InetAddr.h"
 #include "Configuration.h"
 #include "Acceptor.h"
@@ -16,9 +16,11 @@ int main() {
 	cout << "..............................." << endl;
 	cout << conn.connectionInfo() << endl;
 	conn.send("welcome to server!");
-
-	cout << "server receive" << ": ";
-	cout << conn.receive() << endl;
-	conn.send(conn.receive());
-
+	conn.shutDown();
+	while(1){
+		cout << "server receive" << ": ";
+		string msg = conn.receive();
+		cout << msg << endl;
+		conn.send(msg);
+	}
 }
