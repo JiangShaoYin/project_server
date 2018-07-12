@@ -1,0 +1,4 @@
+ip       192.168.4.51
+port	    11888
+mydict	    /home/jiang/project1/data/mydict.dat
+myindex	   /home/jiang/project1/data/index.dat
