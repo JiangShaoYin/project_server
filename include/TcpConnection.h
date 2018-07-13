@@ -12,10 +12,9 @@ class EpollPoller;
 class TcpConnection;
 
 using TcpConnPtr = shared_ptr<TcpConnection>;
-
-class TcpConnection {
-	public:
-		using TcpConnCb = function<void(const TcpConnPtr&)>;
+using CbFunction = function<void(const TcpConnPtr&)>;
+					//TcpConnection的成员函数，需要把当前类对象作为参数使用
+class TcpConnection : public enable_shared_from_this<TcpConnection> {
 	public:
 		TcpConnection(int fd, EpollPoller* poller);
 		TcpConnection(int fd);
@@ -23,12 +22,12 @@ class TcpConnection {
 		void send(const string & msg);
 		void shutDown();
 		string connectionInfo();
-			void setOnConnCb(const TcpConnCb &cb) { _onConnCb = cb;}
-			void setOnMsgCb(const TcpConnCb &cb) { _onMsgCb = cb;}
-			void setOnCloseCb(const TcpConnCb &cb) { _onCloseCb = cb;}
-		void handleOnConnCb() {_onConnCb(const TcpConnPtr&);}
-		void handleOnMsgCb() { _onMsgCb();}
-		void handleOnCloseCb() { _onCloseCb();}
+			void setOnConnCb(const CbFunction &cb) { _onConnCb = cb;}
+			void setOnMsgCb(const CbFunction &cb) { _onMsgCb = cb;}
+			void setOnCloseCb(const CbFunction &cb) { _onCloseCb = cb;}
+		void handleOnConnCb() {_onConnCb(shared_from_this());}
+		void handleOnMsgCb() { _onMsgCb(shared_from_this());}
+		void handleOnCloseCb() { _onCloseCb(shared_from_this());}
 	private:
 		Socket _sockfd;
 		SocketIO _sockIO;
@@ -36,8 +35,8 @@ class TcpConnection {
 		EpollPoller* _poller;
 		const InetAddr _localAddr;
 		const InetAddr _peerAddr;
-			TcpConnCb _onConnCb;
-			TcpConnCb _onMsgCb;
-			TcpConnCb _onCloseCb;
+			CbFunction _onConnCb;
+			CbFunction _onMsgCb;
+			CbFunction _onCloseCb;
 };//end of TcpConnection
 #endif

@@ -10,11 +10,11 @@ using namespace std;
 
 class Acceptor{
 public:
-	Acceptor(int listenfd, const InetAddr & addr);
+	Acceptor(int sfd, const InetAddr & addr);
 	Acceptor();
 	void ready();			//服务器准备监听
 	int accept();			//接收新连接，返回与客户通信的newfd(peerfd)
-	int fd() const{	return _listenfd.fd();}//
+	int fd() const{	return _sfd.fd();}//
 	string ipPort()const;
 private:
 	void setReuseAddr(bool on);//ready依次调用
@@ -22,7 +22,7 @@ private:
 	void bind();
 	void listen();
 private:
-	Socket _listenfd;
+	Socket _sfd;
 	InetAddr _addr;
 };
 #endif

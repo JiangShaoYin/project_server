@@ -14,13 +14,6 @@ class MutexLock {
 		pthread_mutex_t * getMutex() {	return &_mutex;}//传指针效率更高？
 		~MutexLock() {	pthread_mutex_destroy(&_mutex);}
 	private:
-	pthread_mutex_t _mutex;
-};
-class MutexLockGuard : public MutexLock {
-	public:
-		MutexLockGuard(MutexLock & mutex) :_mutex(mutex){_mutex.lock();}
-		~MutexLockGuard() {_mutex.unlock();}
-	private:
-		MutexLock & _mutex;
+		pthread_mutex_t _mutex;
 };
 #endif

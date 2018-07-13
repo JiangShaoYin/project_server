@@ -14,12 +14,12 @@ using std::cout;
 using std::endl;
 
 
-Acceptor::Acceptor(int listenfd, const InetAddr & addr)
-	: _listenfd(listenfd),
+Acceptor::Acceptor(int sfd, const InetAddr & addr)
+	: _sfd(sfd),
 	_addr(addr) {}
 
 Acceptor::Acceptor()
-	:_listenfd(createSocketFd()) {
+	:_sfd(createSocketFd()) {
 		InetAddr _addr;
 	}
 
@@ -31,7 +31,7 @@ Acceptor::Acceptor()
 	 }
 
 int Acceptor::accept() {
-	int peerfd = ::accept(_listenfd.fd(), NULL, NULL);
+	int peerfd = ::accept(_sfd.fd(), NULL, NULL);
 	if(peerfd == -1) {
 		perror("accept error");
 	}
@@ -40,13 +40,13 @@ int Acceptor::accept() {
 
 void Acceptor::setReuseAddr(bool flag) {
 	int on = (flag ? 1 : 0);
-	if(::setsockopt(_listenfd.fd(), 
+	if(::setsockopt(_sfd.fd(), 
 				SOL_SOCKET, 
 				SO_REUSEADDR, 
 				&on, 
 				static_cast<socklen_t>(sizeof(on))) == -1) {
 		perror("setsockopt reuseaddr error");
-		::close(_listenfd.fd());
+		::close(_sfd.fd());
 		exit(EXIT_FAILURE);
 	}
 }
@@ -55,13 +55,13 @@ void Acceptor::setReuseAddr(bool flag) {
 void Acceptor::setReusePort(bool flag) {
 #ifdef SO_REUSEPORT
 	int on = (flag ? 1 : 0);
-	if(::setsockopt(_listenfd.fd(), 
+	if(::setsockopt(_sfd.fd(), 
 				SOL_SOCKET,
 				SO_REUSEPORT,
 				&on,
 				static_cast<socklen_t>(sizeof(on))) == -1) {
 		perror("setsockopt reuseport error");
-		::close(_listenfd.fd());
+		::close(_sfd.fd());
 		exit(EXIT_FAILURE);
 	}
 #else
@@ -72,19 +72,19 @@ void Acceptor::setReusePort(bool flag) {
 }
 
 void Acceptor::bind() {
-	if(-1 == ::bind(_listenfd.fd(), 
+	if(-1 == ::bind(_sfd.fd(), 
 				(const struct sockaddr*)_addr.getInetAddrPtr(), 
 				sizeof(InetAddr))) {
 		perror("bind error");
-		::close(_listenfd.fd());
+		::close(_sfd.fd());
 		exit(EXIT_FAILURE);
 	}
 }
 
 void Acceptor::listen() {
-	if(-1 == ::listen(_listenfd.fd(), 10)) {
+	if(-1 == ::listen(_sfd.fd(), 10)) {
 		perror("listen error");
-		::close(_listenfd.fd());
+		::close(_sfd.fd());
 		exit(EXIT_FAILURE);
 	}
 }

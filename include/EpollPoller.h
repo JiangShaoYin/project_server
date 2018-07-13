@@ -4,32 +4,42 @@
 #define __EPOLLPOLLER_H__
 #include "TcpConnection.h"
 #include "Acceptor.h"
+#include "MutexLock.h"
 #include <vector>
 #include <map>
 
-
+using Functor = function<void()>;
 class EpollPoller {
-using EpollCb = TcpConnection::TcpConnCb;
 	public:
 		EpollPoller(Acceptor& acceptor);
 		void loop();
 		void unloop();
+		void setOnConnCb(CbFunction);
+		void setOnMsgCb(CbFunction);
+		void setOnCloseCb(CbFunction);
+
+		void regesterToThreadIO(const Functor& cb);
 	private:
 		void wakeUp();
 		void waitEpollFd();
-			void handleNewConntiton();
-			void handleMsg();
-			void handleRead();
+			int epollwaitAndCheckReturn(); 
+			void traverseActiveFd(int activeFdNum);
+				void handleNewConntiton();
+				void handleMsg(int newfd);//处理旧连接
+				void handleRead();
 	private:
 		Acceptor _acceptor;
 		int _efd;
-		int _newfd;//用于与客户端通信的fd
+		int _sfd;//用于与客户端通信的fd
+		int _eventfd;//用于进程间通信
 		bool _looping;
-		vector<struct epoll_event> _eventList;
+		vector<struct epoll_event> _eventList;//epoll_event保存要监控的fd，和监控的事项(EPOLLIN)
 		map<int,TcpConnPtr> _conMap;
-			EpollCb _onConnCb;
-			EpollCb _onMsgCb;
-			EpollCb _onCloseCb;
+			CbFunction _onConnCb;
+			CbFunction _onMsgCb;
+			CbFunction _onCloseCb;
+		vector<Functor> _threadIOtodoList;
+		MutexLock _mutex;
 };
 
 
