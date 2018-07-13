@@ -35,6 +35,7 @@ void ThreadPool::threadFunc() {
 }
 
 Task ThreadPool::getTask() {	return _taskQue.pop();}
+
 ThreadPool::~ThreadPool() {
 	cout << "~ThreadPool" << endl;
 	if(!_exit) stop();}

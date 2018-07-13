@@ -21,6 +21,7 @@ class TcpConnection : public enable_shared_from_this<TcpConnection> {
 		string receive();
 		void send(const string & msg);
 		void shutDown();
+		void sendResultToIOthread(const string &result);//计算线程要与IO线程进行通信： 计算线程要通知IO线程发送结果()
 		string connectionInfo();
 			void setOnConnCb(const CbFunction &cb) { _onConnCb = cb;}
 			void setOnMsgCb(const CbFunction &cb) { _onMsgCb = cb;}
@@ -28,15 +29,17 @@ class TcpConnection : public enable_shared_from_this<TcpConnection> {
 		void handleOnConnCb() {_onConnCb(shared_from_this());}
 		void handleOnMsgCb() { _onMsgCb(shared_from_this());}
 		void handleOnCloseCb() { _onCloseCb(shared_from_this());}
+		~TcpConnection();
 	private:
 		Socket _sockfd;
 		SocketIO _sockIO;
 		bool _shutDown;
-		EpollPoller* _poller;
+		EpollPoller* _epollPoller;
 		const InetAddr _localAddr;
 		const InetAddr _peerAddr;
 			CbFunction _onConnCb;
 			CbFunction _onMsgCb;
 			CbFunction _onCloseCb;
+		//void sendAndClose(const string &result);
 };//end of TcpConnection
 #endif

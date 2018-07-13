@@ -1,6 +1,7 @@
  /// @date    2018-07-03 17:51:12
  
 #include "TaskQueue.h"
+#include "MutexLockGuard.h"
 
 bool TaskQueue::full() {  return _qsize== _que.size();}
 bool TaskQueue::empty() {	return _que.size() == 0;}

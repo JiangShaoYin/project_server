@@ -1,17 +1,19 @@
  /// @date    2018-07-12 00:27:22
 
 #include "TcpConnection.h"
+#include "EpollPoller.h"
 #include <string.h>
 #include <stdio.h>
+using namespace std;
 
 TcpConnection::TcpConnection(int fd, EpollPoller* poller)
 	:_sockfd(fd),
 	 _sockIO(fd),
 	 _shutDown(false),
-	 _poller(poller), 
+	 _epollPoller(poller), 
 	 _localAddr(Socket::getLocalAddr(fd)),
 	 _peerAddr(Socket::getPeerAddr(fd))  {
-		// _sockfd.nonBlock();
+		 _sockfd.nonBlock();
 		}
 
 TcpConnection::TcpConnection(int fd)
@@ -20,7 +22,7 @@ TcpConnection::TcpConnection(int fd)
 	 _shutDown(false),
 	 _localAddr(Socket::getLocalAddr(fd)),
 	 _peerAddr(Socket::getPeerAddr(fd))  {
-//		 _sockfd.nonBlock();
+		 _sockfd.nonBlock();
 	 }
 
 string TcpConnection::receive() {
@@ -32,9 +34,8 @@ string TcpConnection::receive() {
 	else
 		return string(buf);
 }
-void TcpConnection::send(const string & msg) {
-	_sockIO.writen(msg.c_str(), msg.size());
-}
+void TcpConnection::send(const string & msg) {_sockIO.writen(msg.c_str(), msg.size());}
+
 void TcpConnection::shutDown() {
 	if(!_shutDown)
 		_sockfd.shutDownWrite();
@@ -49,4 +50,18 @@ string TcpConnection::connectionInfo() {
 			 _peerAddr.ip().c_str(),
 			 _peerAddr.port());
 	return string(buf);
+}
+//void TcpConnection::sendAndClose(const string& result) {
+//	send(result);
+	//shutDown();
+//}
+void TcpConnection::sendResultToIOthread(const string& result) {
+	_epollPoller->regesterToThreadIO(bind(&TcpConnection::send, this, result));
+}
+
+TcpConnection::~TcpConnection() {
+	if(!_shutDown) {
+		_shutDown = true;
+		shutDown();
+	}
 }

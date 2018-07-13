@@ -7,7 +7,7 @@
 #include "MutexLock.h"
 #include <vector>
 #include <map>
-
+//IO线程维护着与各个客户端的通信，由EpollPoller实现
 using Functor = function<void()>;
 class EpollPoller {
 	public:
@@ -19,6 +19,7 @@ class EpollPoller {
 		void setOnCloseCb(CbFunction);
 
 		void regesterToThreadIO(const Functor& cb);
+		~EpollPoller();
 	private:
 		void wakeUp();
 		void waitEpollFd();
@@ -26,7 +27,8 @@ class EpollPoller {
 			void traverseActiveFd(int activeFdNum);
 				void handleNewConntiton();
 				void handleMsg(int newfd);//处理旧连接
-				void handleRead();
+				void handleActiveEventFd();
+				void doPendingFunctors();
 	private:
 		Acceptor _acceptor;
 		int _efd;

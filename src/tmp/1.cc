@@ -4,7 +4,9 @@
 #include "Configuration.h"
 #include "Acceptor.h"
 #include "TcpConnection.h"
+#include "TcpServer.h"
 #include <stdlib.h>
+
 
 int main() {
 	Acceptor acceptor;

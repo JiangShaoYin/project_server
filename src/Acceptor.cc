@@ -20,7 +20,7 @@ Acceptor::Acceptor(int sfd, const InetAddr & addr)
 
 Acceptor::Acceptor()
 	:_sfd(createSocketFd()) {
-		InetAddr _addr;
+	cout << "Acceptor()" << " create a sfd " << endl;
 	}
 
 	 void Acceptor::ready() {

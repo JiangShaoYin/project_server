@@ -61,8 +61,8 @@ inline int createEventFd()
 inline void addEpollFdRead(int efd, int fd)
 {
 	struct epoll_event ev;
-	ev.data.fd = fd;
-	ev.events = EPOLLIN;
+		ev.data.fd = fd;
+		ev.events = EPOLLIN;
 	int ret = epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
 	if(-1 == ret)
 	{
